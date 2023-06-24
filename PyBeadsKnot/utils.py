@@ -3,6 +3,8 @@ from KnotGraph import knotGraph
 from Node import Node
 from Edge import Edge
 
+import math
+
 class mousePosition:
 	x=0
 	y=0
@@ -28,7 +30,7 @@ class Application:
 		sampleND2=Node(300, 400, self)
 		self.kg.addNode(sampleND1)
 		self.kg.addNode(sampleND2)
-		sampleEG1=Edge(sampleND1, sampleND1.neighbor[2], sampleND2, sampleND2.neighbor[0], self)
+		sampleEG1=Edge(sampleND1, 2, sampleND2, 0, self)
 
 		self.draw()
 
@@ -70,7 +72,8 @@ class Application:
 
 
 
-
+def dist(a,b,c,d):
+	return math.sqrt((a-c)*(a-c)+(b-d)*(b-d))
 
 
 def isNear(a,b,c,d):

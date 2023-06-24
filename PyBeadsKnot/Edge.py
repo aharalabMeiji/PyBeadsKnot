@@ -1,23 +1,128 @@
 #from Node import Node
 #from Bead import Bead
-from bezier import bezier
+
+from utils import dist
+
+import math
 
 class Edge:
 	this_is_edge=True
 	bz=None
 	#bandEdge=False
 	#bandEdgeCode=0
-
-	def __init__(self, nA,bA,nB,bB, _p):
+	def __init__(self, nA, rA, nB, rB, _p):
 		self.nodeA=nA
-		self.beadA=bA
+		self.rA=rA
 		self.nodeB=nB
-		self.beadB=bB
-		self.bz=bezier()
+		self.rB=rB
+		#self.bz=bezier()
 		self.parent=_p
 		self.id=_p.nextEdgeID
 		_p.nextEdgeID+=1
+		self.ec=EdgeConst()
 		pass
+
+
+	def getT1T2(self):
+		x1=self.nodeA.x
+		y1=self.nodeA.y
+		x2=self.nodeA.edge_x(self.rA)
+		y2=self.nodeA.edge_y(self.rA)
+		x3=self.nodeB.edge_x(self.rA)
+		y3=self.nodeB.edge_y(self.rA)
+		x4=self.nodeB.x
+		y4=self.nodeB.y
+		## getRateT1T2
+		rate = (dist(x4, y4, x1, y1))/250.0;## 250=計測したときのV4-V1の長さ
+		t1 = (math.atan2(x2-x1, y2-y1, x4-x1, y4-y1))*180.0/math.pi
+		t2 = (math.atan2(x2-x1, y2-y1, x3-x4, y3-y4))*180.0/math.pi
+		th1 = int(t1 / 10)
+		th2 = int(t2 / 10)
+		##print("" + rate + " " + t1 + " " + t2 + " " + th1 + " " + th2)
+		if th1 == 36:
+			th1 = 0
+			t1 -= 360.0
+		if th2 == 36:
+			th2 = 0
+			t2 -= 360.0
+		## 端数の処理のため
+		t1 -= 10.0 * th1
+		t2 -= 10.0 * th2
+		t1 /= 10.0
+		t2 /= 10.0
+		return t1,th1,t2,th2,rate
+
+	def scalingShapeModifier(self) :
+		if not self.nodeA.inUse or not self.nodeB.inUse:
+			return 
+		# 準備
+		t1,th1,t2,th2,rate=self.getT1T2(self)
+		a10 = self.ec.len1[th1][th2]
+		a11 = self.ec.len1[(th1 + 1) % 36][th2]
+		a12 = self.ec.len1[th1][(th2 + 1) % 36]
+		a1 = a10 + t1 * (a11 - a10) + t2 * (a12 - a10)
+		a20 = self.ec.len2[th1][th2]
+		a21 = self.ec.len2[(th1 + 1) % 36][th2]
+		a22 = self.ec.len2[th1][(th2 + 1) % 36]
+		a2 = a20 + t1 * (a21 - a20) + t2 * (a22 - a20)
+		self.nodeA.r[self.rA] = rate * a1
+		self.nodeB.r[self.rB] = rate * a2
+		self.rA=rate * a1
+		self.rB=rate * a2
+
+	def getAngleRange(self):
+		t1,th1,t2,th2,rate=self.getT1T2(self)
+		a30 = self.ec.angleRange[th1][th2]
+		a31 = self.ec.angleRange[(th1 + 1) % 36][th2]
+		a32 = self.ec.angleRange[th1][(th2 + 1) % 36]
+		a3 = a30 + t1 * (a31 - a30) + t2 * (a32 - a30)
+		return a3
+
+
+		##最適化されたedgeの弧長を返す。
+	def getArclength(self) :
+		t1,th1,t2,th2,rate=self.getT1T2(self)
+		a40 = self.ec.arcLen[th1][th2]
+		a41 = self.ec.arcLen[(th1 + 1) % 36][th2]
+		a42 = self.ec.arcLen[th1][(th2 + 1) % 36]
+		a4 = a40 + t1 * (a41 - a40) + t2 * (a42 - a40)
+		return a4*rate
+
+	def naibun(self, p, q, t): 
+		return (p*(1.0-t)+q*t)
+
+	def coordinateBezier(self,a,c,e,g,t):
+		x1 = self.naibun(a, c, t)
+		x2 = self.naibun(c, e, t)
+		x3 = self.naibun(e, g, t)
+		x4 = self.naibun(x1, x2, t)
+		x5 = self.naibun(x2, x3, t)
+		return self.naibun(x4, x5, t)
+
+	def getRealArclength(self) :
+		arclen=0
+		x1=self.nodeA.x
+		y1=self.nodeA.y
+		x2=self.nodeA.edge_x(self.rA)
+		y2=self.nodeA.edge_y(self.rA)
+		x3=self.nodeB.edge_x(self.rA)
+		y3=self.nodeB.edge_y(self.rA)
+		x4=self.nodeB.x
+		y4=self.nodeB.y
+		xx0 = x1
+		yy0 = y1
+		for i in range(100):
+			t= 0.01*i
+			xx = self.coordinateBezier(x1, x2, x3, x4, t)
+			yy = self.coordinateBezier(y1, y2, y3, y4, t)
+			arclen += dist(xx0, yy0, xx, yy)
+			xx0 = xx
+			yy0 = yy
+		return arclen;
+
+
+
+################################
 
 class EdgeConst :
 	len1 = [[147.91724, 158.80765, 162.3324, 162.2876, 161.04608, 159.28922, 157.25934, 154.61673, 149.53748, 141.48767, 135.38705, 132.3147, 130.10965, 127.808685, 124.88284, 121.35672, 118.79715, 118.191345, 119.33679, 121.52466, 123.0058, 123.45752, 122.80316, 122.02042, 120.795105, 118.436615, 115.118195, 111.825134, 109.17355, 107.23453, 105.92224, 104.87497, 104.76669, 107.01047, 115.18564, 130.75687], 
