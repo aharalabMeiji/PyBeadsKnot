@@ -1,13 +1,12 @@
 #from Node import Node
-#from Bead import Bead
-
-from utils import dist
+from Bead import Bead
+from utils import *
 
 import math
+import gc## gabbage collection
 
 class Edge:
 	this_is_edge=True
-	bz=None
 	#bandEdge=False
 	#bandEdgeCode=0
 	def __init__(self, nA, rA, nB, rB, _p):
@@ -20,22 +19,48 @@ class Edge:
 		self.id=_p.nextEdgeID
 		_p.nextEdgeID+=1
 		self.ec=EdgeConst()
+		self.scalingShapeModifier()
+		self.inUse=True
 		pass
 
+	
+	def isColapse(self):
+		return self.unUse;
 
+	def drawEdge(self, canvas):
+		x1=self.nodeA.x
+		y1=self.nodeA.y
+		x2=self.nodeA.edge_x(self.rA)
+		y2=self.nodeA.edge_y(self.rA)
+		x3=self.nodeB.edge_x(self.rB)
+		y3=self.nodeB.edge_y(self.rB)
+		x4=self.nodeB.x
+		y4=self.nodeB.y
+		xx0 = x1
+		yy0 = y1
+		for i in range(100):
+			t= 0.01*i
+			xx = self.coordinateBezier(x1, x2, x3, x4, t)
+			yy = self.coordinateBezier(y1, y2, y3, y4, t)
+			canvas.create_line(xx0, yy0, xx, yy)
+			xx0 = xx
+			yy0 = yy
+			
+		pass
+	
 	def getT1T2(self):
 		x1=self.nodeA.x
 		y1=self.nodeA.y
 		x2=self.nodeA.edge_x(self.rA)
 		y2=self.nodeA.edge_y(self.rA)
-		x3=self.nodeB.edge_x(self.rA)
-		y3=self.nodeB.edge_y(self.rA)
+		x3=self.nodeB.edge_x(self.rB)
+		y3=self.nodeB.edge_y(self.rB)
 		x4=self.nodeB.x
 		y4=self.nodeB.y
 		## getRateT1T2
 		rate = (dist(x4, y4, x1, y1))/250.0;## 250=計測したときのV4-V1の長さ
-		t1 = (math.atan2(x2-x1, y2-y1, x4-x1, y4-y1))*180.0/math.pi
-		t2 = (math.atan2(x2-x1, y2-y1, x3-x4, y3-y4))*180.0/math.pi
+		t1 = (atan2vec(x2-x1, y2-y1, x4-x1, y4-y1))*180.0/math.pi
+		t2 = (atan2vec(x2-x1, y2-y1, x3-x4, y3-y4))*180.0/math.pi
 		th1 = int(t1 / 10)
 		th2 = int(t2 / 10)
 		##print("" + rate + " " + t1 + " " + t2 + " " + th1 + " " + th2)
@@ -56,7 +81,7 @@ class Edge:
 		if not self.nodeA.inUse or not self.nodeB.inUse:
 			return 
 		# 準備
-		t1,th1,t2,th2,rate=self.getT1T2(self)
+		t1,th1,t2,th2,rate=self.getT1T2()
 		a10 = self.ec.len1[th1][th2]
 		a11 = self.ec.len1[(th1 + 1) % 36][th2]
 		a12 = self.ec.len1[th1][(th2 + 1) % 36]
@@ -67,8 +92,6 @@ class Edge:
 		a2 = a20 + t1 * (a21 - a20) + t2 * (a22 - a20)
 		self.nodeA.r[self.rA] = rate * a1
 		self.nodeB.r[self.rB] = rate * a2
-		self.rA=rate * a1
-		self.rB=rate * a2
 
 	def getAngleRange(self):
 		t1,th1,t2,th2,rate=self.getT1T2(self)
@@ -119,6 +142,87 @@ class Edge:
 			xx0 = xx
 			yy0 = yy
 		return arclen;
+
+	def updateBeadsOnEdge(self):
+		# if this edge is aolupse return
+		if self.isColupse:
+			return
+		## calculate the ideal arclength
+		idealArclength = self.getRealArclength()
+		##理想とするビーズの内個数を計算する。
+		idealBeadsNumber = int(idealArclength / self.parent.beadsInterval) - 2;
+		if idealBeadsNumber<5:
+			idealBeadsNumber=5## or spread the nodes interval
+		##edgeの上にある現在のビーズのリストを作る。
+		
+		nodeA = self.nodeA
+		nodeB = self.nodeB
+		if nodeA==None or nodeB==None:
+			return 
+		b0 = nodeA
+
+		b1 = nodeA.neighbors[self.rA]
+		beadsOnEdge = [b0,b1]
+		while True:
+			b2 = b1.otherside(b0)
+			if b2==None:
+				#some error message
+				return
+			beadsOnEdge.append(b2)
+			if b2==nodeB:
+				break
+			if b2.isJoint or b2.isMidJoint:
+				break
+			b0=b1
+			b1=b2
+		realBeadsNumber = len(beadsOnEdge)-2 ## subs for two ends
+		if idealBeadsNumber > realBeadsNumber:## we need add beads
+			repeat = idealBeadsNumber-realBeadsNumber
+			for i in range(repeat):
+				newBD=Bead()
+				bd0=beadsOnEdge[0]
+				bd1=beadsOnEdge[1]
+				if not bd1 in bd0.neighbors or not bd0 in bd1.neighbors:
+					return
+				index0=bd0.neighbors.index(bd1)
+				index1=bd1.neighbors.index(bd0)
+				bd0.neighbors[index0]=newBD
+				newBD.neighbors[0]=bd0
+				bd1.neighbors[index1]=newBD
+				newBD.neighbors[2]=bd1
+				beadsOnEdge.insert(1, newBD)
+		elif idealBeadsNumber < realBeadsNumber:## we need delete beads
+			repeat = realBeadsNumber-idealBeadsNumber
+			for i in range(repeat):
+				deletedBD=beadsOnEdge[1]
+				bd0=beadsOnEdge[0]
+				index0=bd0.neighbors.index(deletedBD)
+				bd2=beadsOnEdge[2]
+				index2=bd2.neighbors.index(deletedBD)
+				bd0.neighbors[index0]=bd2
+				bd2.neighbors[index2]=bd0
+				deletedBD.inUse=False
+				deletedBD.parent.beads.delete(deletedBD)
+				del beadsOnEdge[1]
+				
+			gc.collect()
+		## set the coordinates of beads on this edge.
+		x1=self.nodeA.x
+		y1=self.nodeA.y
+		x2=self.nodeA.edge_x(self.rA)
+		y2=self.nodeA.edge_y(self.rA)
+		x3=self.nodeB.edge_x(self.rA)
+		y3=self.nodeB.edge_y(self.rA)
+		x4=self.nodeB.x
+		y4=self.nodeB.y
+		for i in range(1,idealBeadsNumber+2):
+			t= 1.0*i/(idealBeadsNumber+1)
+			xx = self.coordinateBezier(x1, x2, x3, x4, t)
+			yy = self.coordinateBezier(y1, y2, y3, y4, t)
+			beadsOnEdge[i].x=xx		
+			beadsOnEdge[i].y=yy		
+
+
 
 
 

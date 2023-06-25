@@ -1,6 +1,6 @@
 import tkinter as tk
 
-from utils import *
+from application import Application
 
 if __name__ == "__main__":
 	ROOT = tk.Tk()

@@ -18,6 +18,13 @@ class knotGraph:
 		for node in self.nodes:
 			node.drawNode(canvas)
 
+	def addEdge(self, ed):
+		if getattr(ed, 'this_is_edge', False):
+			self.edges.append(ed)
+
+	def drawAllEdge(self, canvas):
+		for edge in self.edges:
+			edge.drawEdge(canvas)
 
 	pass
 

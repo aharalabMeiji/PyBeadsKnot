@@ -10,12 +10,14 @@ class Node:
 		self.parent=_p
 		self.theta=0## argument
 		self.center=Bead(self.x, self.y, self.parent)
-		self.neighbor=[]## four arms
+		self.center.isJoint=True
+		self.neighbors=[]## four arms
 		self.r=[];#four length of arms
 		for i in range(4):
 			self.r.append(10)
-			self.neighbor.append(Bead(self.edge_sx(i, 20), self.edge_sy(i, 20), self.parent))
-		self.radius=10# radius of node in canvas
+			newBD=Bead(self.edge_sx(i, 20), self.edge_sy(i, 20), self.parent)
+			self.center.neighbors.append(newBD)
+			newBD.neighbor[0]=self.center
 		self.isJoint=False##is it a Joint node_?
 		self.drawOn=False  ## show this node?
 		self.id=self.parent.nextNodeID # ID of nodes
@@ -41,7 +43,13 @@ class Node:
 	pass
 
 	def drawNode(self, canvas):
-		canvas.create_oval(self.x-self.radius, self.y-self.radius, self.x+self.radius, self.y+self.radius, fill='red')
+		canvas.create_oval(self.x-self.parent.nodeRadius, self.y-self.parent.nodeRadius, self.x+self.parent.nodeRadius, self.y+self.parent.nodeRadius, fill='red')
 		pass
 
 
+class midJoint(Node):
+	def __init__(self):
+		super().__init__()
+		self.center.isMidJoint=True
+		self.neighbor[1]=None
+		self.neighbor[3]=None
