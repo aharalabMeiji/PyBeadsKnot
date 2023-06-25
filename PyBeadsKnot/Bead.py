@@ -6,7 +6,7 @@ class Bead:
 		self.parent=_p
 		self.id=_p.nextBeadID
 		_p.nextBeadID += 1
-		self.parent.beads.append(self)
+		self.parent.kg.beads.append(self)
 		self.c=0# ???
 		self.neighbors=[None,None,None,None]
 		## 0 : east overcrossing  ## 1 : south undercrossing  

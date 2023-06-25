@@ -2,7 +2,7 @@ import tkinter as tk
 import math
 
 from utils import mousePosition, isNear
-from knotGraph import knotGraph
+from KnotGraph import knotGraph
 from Node import Node
 from Edge import Edge
 
@@ -50,6 +50,9 @@ class Application:
 			self.mp.magneticND.x=self.mp.x
 			self.mp.magneticND.y=self.mp.y
 			self.mp.magneticND.drawNode(self.canvas)
+			for edge in self.kg.edges:
+				edge.scalingShapeModifier()
+			self.kg.drawAllBeads(self.canvas)
 	# 
 
 	def buttonPressed(self, event):
@@ -67,10 +70,11 @@ class Application:
 
 	def draw(self):
 		self.canvas.delete("all")
-		self.kg.drawAllNode(self.canvas)
+		self.kg.drawAllNodes(self.canvas)
 		for edge in self.kg.edges:
 			edge.scalingShapeModifier()
 		if self.showEdge:
-			self.kg.drawAllEdge(self.canvas)
+			self.kg.drawAllEdges(self.canvas)
+		self.kg.drawAllBeads(self.canvas)
 		self.root.after(10, self.draw)
 		pass

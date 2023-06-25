@@ -17,7 +17,7 @@ class Node:
 			self.r.append(10)
 			newBD=Bead(self.edge_sx(i, 20), self.edge_sy(i, 20), self.parent)
 			self.center.neighbors.append(newBD)
-			newBD.neighbor[0]=self.center
+			newBD.neighbors[0]=self.center
 		self.isJoint=False##is it a Joint node_?
 		self.drawOn=False  ## show this node?
 		self.id=self.parent.nextNodeID # ID of nodes
