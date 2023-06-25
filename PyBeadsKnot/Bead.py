@@ -27,14 +27,9 @@ class Bead:
 	def otherside(self, p):
 		if p==None:
 			return None
-		if p==self.n1:
-			return self.n2
-		elif p==self.n2:
-			return self.n1
-		elif p==self.u1:
-			return self.u2
-		elif p==self.u2:
-			return self.u1
+		for i in range(4):	
+			if p==self.neighbors[i]:
+				return self.neighbors[(i+2)%4]
 		return None
 
 	def drawBead(self, canvas):

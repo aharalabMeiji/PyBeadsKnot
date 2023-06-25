@@ -11,12 +11,11 @@ class Node:
 		self.theta=0## argument
 		self.center=Bead(self.x, self.y, self.parent)
 		self.center.isJoint=True
-		self.neighbors=[]## four arms
 		self.r=[];#four length of arms
 		for i in range(4):
 			self.r.append(10)
 			newBD=Bead(self.edge_sx(i, 20), self.edge_sy(i, 20), self.parent)
-			self.center.neighbors.append(newBD)
+			self.center.neighbors[i]=newBD
 			newBD.neighbors[0]=self.center
 		self.isJoint=False##is it a Joint node_?
 		self.drawOn=False  ## show this node?

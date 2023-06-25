@@ -18,14 +18,14 @@ class Edge:
 		self.parent=_p
 		self.id=_p.nextEdgeID
 		_p.nextEdgeID+=1
+		self.inUse=True
 		self.ec=EdgeConst()
 		self.scalingShapeModifier()
-		self.inUse=True
 		pass
 
 	
-	def isColapse(self):
-		return self.unUse;
+	def isCollapse(self):
+		return not self.inUse;
 
 	def drawEdge(self, canvas):
 		x1=self.nodeA.x
@@ -92,6 +92,11 @@ class Edge:
 		a2 = a20 + t1 * (a21 - a20) + t2 * (a22 - a20)
 		self.nodeA.r[self.rA] = rate * a1
 		self.nodeB.r[self.rB] = rate * a2
+		bdA=self.nodeA.center.neighbors[self.rA]
+		bdB=self.nodeB.center.neighbors[self.rB]
+		bdA.neighbors[2]=bdB
+		bdB.neighbors[2]=bdA
+		self.updateBeadsOnEdge()
 
 	def getAngleRange(self):
 		t1,th1,t2,th2,rate=self.getT1T2(self)
@@ -145,7 +150,7 @@ class Edge:
 
 	def updateBeadsOnEdge(self):
 		# if this edge is aolupse return
-		if self.isColupse:
+		if self.isCollapse():
 			return
 		## calculate the ideal arclength
 		idealArclength = self.getRealArclength()
@@ -159,9 +164,9 @@ class Edge:
 		nodeB = self.nodeB
 		if nodeA==None or nodeB==None:
 			return 
-		b0 = nodeA
+		b0 = nodeA.center
 
-		b1 = nodeA.neighbors[self.rA]
+		b1 = nodeA.center.neighbors[self.rA]
 		beadsOnEdge = [b0,b1]
 		while True:
 			b2 = b1.otherside(b0)
@@ -169,7 +174,7 @@ class Edge:
 				#some error message
 				return
 			beadsOnEdge.append(b2)
-			if b2==nodeB:
+			if b2==nodeB.center:
 				break
 			if b2.isJoint or b2.isMidJoint:
 				break
@@ -179,9 +184,9 @@ class Edge:
 		if idealBeadsNumber > realBeadsNumber:## we need add beads
 			repeat = idealBeadsNumber-realBeadsNumber
 			for i in range(repeat):
-				newBD=Bead()
 				bd0=beadsOnEdge[0]
 				bd1=beadsOnEdge[1]
+				newBD=Bead((bd0.x+bd1.x)*0.5, (bd0.y+bd1.y)*0.5, self.parent)
 				if not bd1 in bd0.neighbors or not bd0 in bd1.neighbors:
 					return
 				index0=bd0.neighbors.index(bd1)
@@ -211,11 +216,11 @@ class Edge:
 		y1=self.nodeA.y
 		x2=self.nodeA.edge_x(self.rA)
 		y2=self.nodeA.edge_y(self.rA)
-		x3=self.nodeB.edge_x(self.rA)
-		y3=self.nodeB.edge_y(self.rA)
+		x3=self.nodeB.edge_x(self.rB)
+		y3=self.nodeB.edge_y(self.rB)
 		x4=self.nodeB.x
 		y4=self.nodeB.y
-		for i in range(1,idealBeadsNumber+2):
+		for i in range(1,idealBeadsNumber+1):
 			t= 1.0*i/(idealBeadsNumber+1)
 			xx = self.coordinateBezier(x1, x2, x3, x4, t)
 			yy = self.coordinateBezier(y1, y2, y3, y4, t)

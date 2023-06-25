@@ -28,7 +28,6 @@ class Application:
 		##sample data
 		sampleND1=Node(500, 300, self)
 		sampleND2=Node(300, 500, self)
-		sampleND1.theta=math.pi/6
 		self.kg.addNode(sampleND1)
 		self.kg.addNode(sampleND2)
 		sampleEG1=Edge(sampleND1, 1, sampleND2, 0, self)
@@ -45,6 +44,7 @@ class Application:
 		pass
 
 	def buttonDragging(self, event):
+		self.canvas.delete("all")
 		self.update_coordinates(event)
 		if self.mp.magneticND!=None and getattr(self.mp.magneticND, 'this_is_node', False)==True:
 			self.mp.magneticND.x=self.mp.x
