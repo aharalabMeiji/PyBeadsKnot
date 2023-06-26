@@ -17,7 +17,6 @@ class Application:
 		self.canvas.bind("<ButtonRelease-1>", self.buttonReleased)  # 
 		self.canvas.bind("<Motion>", self.update_coordinates) # 
 		self.kg=knotGraph(self)
-		self.nextBeadID=0
 		self.nextNodeID=0
 		self.nextEdgeID=0
 		self.nodeRadius=10# radius of node in canvas

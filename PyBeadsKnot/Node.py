@@ -1,5 +1,4 @@
 from math import cos, sin, pi
-from Bead import Bead
 
 class Node:
 	this_is_node=True
@@ -9,15 +8,11 @@ class Node:
 		self.y=_y
 		self.parent=_p
 		self.theta=0## argument
-		self.center=Bead(self.x, self.y, self.parent)
+		self.neighbors=[None, None, None, None]
 		self.center.isJoint=True
-		self.r=[];#four length of arms
-		for i in range(4):
-			self.r.append(10)
-			newBD=Bead(self.edge_sx(i, 20), self.edge_sy(i, 20), self.parent)
-			self.center.neighbors[i]=newBD
-			newBD.neighbors[0]=self.center
-		self.isJoint=False##is it a Joint node_?
+		self.r=[10,10,10,10];#four length of arms
+		self.isJoint=True##is it a Joint node_?
+		self.isMidJoint=False
 		self.drawOn=False  ## show this node?
 		self.id=self.parent.nextNodeID # ID of nodes
 		self.parent.nextNodeID+=1
@@ -39,12 +34,21 @@ class Node:
 	def setR(self, i, rr):
 		if isinstance(i, int) and isinstance(rr, float):
 			self.r[i%4]=rr
-	pass
 
 	def drawNode(self, canvas):
 		canvas.create_oval(self.x-self.parent.nodeRadius, self.y-self.parent.nodeRadius, self.x+self.parent.nodeRadius, self.y+self.parent.nodeRadius, fill='red')
 		pass
+	def otherside(self, p):
+		if p==None:
+			return None
+		for i in range(4):	
+			if p==self.neighbors[i]:
+				return self.neighbors[(i+2)%4]
+		return None
 
+	def nextNode(self, i):
+		if self.neighbors[i]==None:
+			return None
 
 class midJoint(Node):
 	def __init__(self):
@@ -52,3 +56,4 @@ class midJoint(Node):
 		self.center.isMidJoint=True
 		self.neighbor[1]=None
 		self.neighbor[3]=None
+

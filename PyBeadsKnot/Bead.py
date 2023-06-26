@@ -24,13 +24,6 @@ class Bead:
 	def deleteBead(self):
 		self.parent.beads.delete(self)
 
-	def otherside(self, p):
-		if p==None:
-			return None
-		for i in range(4):	
-			if p==self.neighbors[i]:
-				return self.neighbors[(i+2)%4]
-		return None
 
 	def drawBead(self, canvas):
 		canvas.create_oval(self.x-self.parent.beadRadius, self.y-self.parent.beadRadius, self.x+self.parent.beadRadius, self.y+self.parent.beadRadius, fill="blue")
