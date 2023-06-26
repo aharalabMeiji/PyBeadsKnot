@@ -9,7 +9,6 @@ class Node:
 		self.parent=_p
 		self.theta=0## argument
 		self.neighbors=[None, None, None, None]
-		self.center.isJoint=True
 		self.r=[10,10,10,10];#four length of arms
 		self.isJoint=True##is it a Joint node_?
 		self.isMidJoint=False
@@ -49,11 +48,17 @@ class Node:
 	def nextNode(self, i):
 		if self.neighbors[i]==None:
 			return None
+		if getattr(self.neightbors[i], 'this_is_edge', False)==False:
+			return None
+		edge=self.neightbors[i]
+		if edge.nodeA==self:
+			return edge.nodeB
+		if edge.nodeB==self:
+			return edge.nodeA
+		return None
 
 class midJoint(Node):
-	def __init__(self):
-		super().__init__()
-		self.center.isMidJoint=True
-		self.neighbor[1]=None
-		self.neighbor[3]=None
+	def __init__(self, _x, _y, _p):
+		super().__init__( _x, _y, _p)
+		self.isMidJoint=True
 

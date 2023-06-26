@@ -21,7 +21,6 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Bead.py" />
     <Compile Include="application.py" />
     <Compile Include="Edge.py" />
     <Compile Include="utils.py" />

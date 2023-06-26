@@ -6,7 +6,6 @@ class knotGraph:
 	def __init__(self, _p):
 		self.nodes=[]
 		self.edges=[]
-		self.beads=[]
 		self.parent=_p
 
 	def addNode(self, nd):
@@ -25,9 +24,7 @@ class knotGraph:
 		for edge in self.edges:
 			edge.drawEdge(canvas)
 
-	def drawAllBeads(self, canvas):
-		for bead in self.beads:
-			bead.drawBead(canvas)
+
 
 
 	pass

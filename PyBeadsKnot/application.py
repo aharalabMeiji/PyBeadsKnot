@@ -3,7 +3,7 @@ import math
 
 from utils import mousePosition, isNear
 from KnotGraph import knotGraph
-from Node import Node
+from Node import Node, midJoint
 from Edge import Edge
 
 class Application:
@@ -19,18 +19,20 @@ class Application:
 		self.kg=knotGraph(self)
 		self.nextNodeID=0
 		self.nextEdgeID=0
-		self.nodeRadius=10# radius of node in canvas
-		self.beadRadius=5
+		self.nodeRadius=5# radius of node in canvas
 		self.beadsInterval=10
-		self.showEdge=True
 
 		##sample data
-		sampleND1=Node(500, 300, self)
-		sampleND2=Node(300, 500, self)
+		sampleND1=Node(500, 100, self)
+		sampleND2=midJoint(300, 300, self)
+		sampleND3=Node(100, 500, self)
 		self.kg.addNode(sampleND1)
 		self.kg.addNode(sampleND2)
-		sampleEG1=Edge(sampleND1, 1, sampleND2, 0, self)
+		self.kg.addNode(sampleND3)
+		sampleEG1=Edge(sampleND1, 1, sampleND2, 3, self)
+		sampleEG2=Edge(sampleND2, 1, sampleND3, 3, self)
 		self.kg.addEdge(sampleEG1)
+		self.kg.addEdge(sampleEG2)
 		self.draw()
 
 	pass
@@ -43,15 +45,14 @@ class Application:
 		pass
 
 	def buttonDragging(self, event):
-		self.canvas.delete("all")
+		#self.canvas.delete("all")
 		self.update_coordinates(event)
 		if self.mp.magneticND!=None and getattr(self.mp.magneticND, 'this_is_node', False)==True:
 			self.mp.magneticND.x=self.mp.x
 			self.mp.magneticND.y=self.mp.y
 			self.mp.magneticND.drawNode(self.canvas)
-			for edge in self.kg.edges:
-				edge.scalingShapeModifier()
-			self.kg.drawAllBeads(self.canvas)
+			#for edge in self.kg.edges:
+			#	edge.scalingShapeModifier()
 	# 
 
 	def buttonPressed(self, event):
@@ -72,8 +73,7 @@ class Application:
 		self.kg.drawAllNodes(self.canvas)
 		for edge in self.kg.edges:
 			edge.scalingShapeModifier()
-		if self.showEdge:
-			self.kg.drawAllEdges(self.canvas)
-		self.kg.drawAllBeads(self.canvas)
+		self.kg.drawAllEdges(self.canvas)
+
 		self.root.after(10, self.draw)
 		pass
