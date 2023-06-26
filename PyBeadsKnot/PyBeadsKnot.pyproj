@@ -23,6 +23,7 @@
   <ItemGroup>
     <Compile Include="application.py" />
     <Compile Include="Edge.py" />
+    <Compile Include="file.py" />
     <Compile Include="utils.py" />
     <Compile Include="knotGraph.py" />
     <Compile Include="Node.py" />

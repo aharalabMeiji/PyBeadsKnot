@@ -5,6 +5,7 @@ from utils import mousePosition, isNear
 from KnotGraph import knotGraph
 from Node import Node, midJoint
 from Edge import Edge
+from file import fileIO
 
 class Application:
 	def __init__(self, root):
@@ -22,6 +23,7 @@ class Application:
 		self.nodeRadius=5# radius of node in canvas
 		self.edgeWidth=3
 		self.beadsInterval=10
+		self.file=fileIO()
 
 		##sample data
 		sampleND1=Node(500, 100, self)
