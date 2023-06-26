@@ -10,8 +10,10 @@ class Edge:
 	def __init__(self, nA, rA, nB, rB, _p):
 		self.nodeA=nA
 		self.rA=rA
+		self.nodeA.neighbors[rA]=self
 		self.nodeB=nB
 		self.rB=rB
+		self.nodeB.neighbors[rB]=self
 		self.parent=_p
 		self.id=_p.nextEdgeID
 		_p.nextEdgeID+=1
@@ -35,11 +37,11 @@ class Edge:
 		y4=self.nodeB.y
 		xx0 = x1
 		yy0 = y1
-		for i in range(100):
-			t= 0.01*i
+		for i in range(1,26):
+			t= 0.04*i
 			xx = self.coordinateBezier(x1, x2, x3, x4, t)
 			yy = self.coordinateBezier(y1, y2, y3, y4, t)
-			canvas.create_line(xx0, yy0, xx, yy, width=5)
+			canvas.create_line(xx0, yy0, xx, yy, width=self.parent.edgeWidth)
 			xx0 = xx
 			yy0 = yy
 			

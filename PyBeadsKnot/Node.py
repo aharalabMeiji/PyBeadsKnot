@@ -1,4 +1,4 @@
-from math import cos, sin, pi
+from math import cos, sin, pi, atan2
 
 class Node:
 	this_is_node=True
@@ -8,7 +8,7 @@ class Node:
 		self.y=_y
 		self.parent=_p
 		self.theta=0## argument
-		self.neighbors=[None, None, None, None]
+		self.neighbors=[None, None, None, None]# four edges from this node
 		self.r=[10,10,10,10];#four length of arms
 		self.isJoint=True##is it a Joint node_?
 		self.isMidJoint=False
@@ -53,12 +53,61 @@ class Node:
 		edge=self.neightbors[i]
 		if edge.nodeA==self:
 			return edge.nodeB
-		if edge.nodeB==self:
+		elif edge.nodeB==self:
 			return edge.nodeA
 		return None
+	def modifyAngle(self):
+		pass
 
 class midJoint(Node):
+	this_is_midjoint=True
 	def __init__(self, _x, _y, _p):
 		super().__init__( _x, _y, _p)
 		self.isMidJoint=True
+
+	def modifyAngle(self):
+		if self.neighbors[0]!=None and self.neighbors[2]!=0:
+			edge0 = self.neighbors[0]
+			node0=None
+			node0R=-1
+			if getattr(edge0,'this_is_edge', False):
+				if edge0.nodeA==self:
+					node0=edge0.nodeB
+					node0R=edge0.rB
+				elif edge0.nodeB==self:
+					node0=edge0.nodeA
+					node0R=edge0.rA
+			if node0==None:
+				return
+			x0=node0.edge_x(node0R)
+			y0=node0.edge_y(node0R)
+			edge1 = self.neighbors[2]
+			node1=None
+			node1R=-1
+			if getattr(edge1,'this_is_edge', False):
+				if edge1.nodeA==self:
+					node1=edge1.nodeB
+					node1R=edge0.rB
+				elif edge1.nodeB==self:
+					node1=edge1.nodeA
+					node1R=edge1.rA
+			if node1==None:
+				return
+			x1=node1.edge_x(node1R)
+			y1=node1.edge_y(node1R)
+			argument=atan2(y0-y1, x0-x1)
+			if self.theta-pi>=argument:
+				argument += 2*pi
+			elif self.theta+pi<argument:
+				argument -= 2*pi
+			if self.theta-pi/2>=argument:
+				argument += pi
+			elif self.theta+pi/2<argument:
+				argument -= pi
+			self.theta = 0.9 * self.theta + 0.1 * argument
+
+
+
+
+
 
