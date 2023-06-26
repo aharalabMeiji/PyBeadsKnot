@@ -32,7 +32,7 @@ class Application:
 		self.kg.addNode(sampleND2)
 		self.kg.addNode(sampleND3)
 		sampleEG1=Edge(sampleND1, 1, sampleND2, 0, self)
-		sampleEG2=Edge(sampleND2, 2, sampleND3, 3, self)
+		sampleEG2=Edge(sampleND2, 2, sampleND3, 0, self)
 		self.kg.addEdge(sampleEG1)
 		self.kg.addEdge(sampleEG2)
 		self.draw()
