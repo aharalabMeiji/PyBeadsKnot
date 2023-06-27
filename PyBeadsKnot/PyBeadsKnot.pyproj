@@ -25,7 +25,7 @@
     <Compile Include="Edge.py" />
     <Compile Include="file.py" />
     <Compile Include="utils.py" />
-    <Compile Include="knotGraph.py" />
+    <Compile Include="KnotGraph.py" />
     <Compile Include="Node.py" />
     <Compile Include="PyBeadsKnot.py" />
   </ItemGroup>

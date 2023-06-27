@@ -23,20 +23,28 @@ class Application:
 		self.nodeRadius=5# radius of node in canvas
 		self.edgeWidth=3
 		self.beadsInterval=10
-		self.file=fileIO()
+		self.file=fileIO(self)
+		self.file.loadFile()
 
 		##sample data
-		sampleND1=Node(500, 100, self)
-		sampleND2=midJoint(300, 300, self)
-		sampleND2.angle=math.pi/2
-		sampleND3=Node(100, 500, self)
-		self.kg.addNode(sampleND1)
-		self.kg.addNode(sampleND2)
-		self.kg.addNode(sampleND3)
-		sampleEG1=Edge(sampleND1, 1, sampleND2, 0, self)
-		sampleEG2=Edge(sampleND2, 2, sampleND3, 0, self)
-		self.kg.addEdge(sampleEG1)
-		self.kg.addEdge(sampleEG2)
+		#sampleND1=Node(400, 100, self)
+		#sampleND2=Node(100, 600, self)
+		#sampleND3=Node(600, 900, self)
+		#sampleND4=Node(900, 400, self)
+		#sampleND5=Node(500, 500, self)
+		#self.kg.addNode(sampleND1)
+		#self.kg.addNode(sampleND2)
+		#self.kg.addNode(sampleND3)
+		#self.kg.addNode(sampleND4)
+		#self.kg.addNode(sampleND5)
+		#sampleEG1=Edge(sampleND1, 1, sampleND5, 3, self)
+		#sampleEG2=Edge(sampleND2, 0, sampleND5, 2, self)
+		#sampleEG3=Edge(sampleND3, 3, sampleND5, 1, self)
+		#sampleEG4=Edge(sampleND4, 2, sampleND5, 0, self)
+		#self.kg.addEdge(sampleEG1)
+		#self.kg.addEdge(sampleEG2)
+		#self.kg.addEdge(sampleEG3)
+		#self.kg.addEdge(sampleEG4)
 		self.draw()
 
 	pass
@@ -76,12 +84,13 @@ class Application:
 
 	def draw(self):
 		self.canvas.delete("all")
-		for node in self.kg.nodes:
-			node.modifyAngle()
-		self.kg.drawAllNodes(self.canvas)
 		for edge in self.kg.edges:
 			edge.scalingShapeModifier()
 		self.kg.drawAllEdges(self.canvas)
+		for node in self.kg.nodes:
+			node.modifyAngle()
+		self.kg.drawAllNodes(self.canvas)
 
 		self.root.after(10, self.draw)
 		pass
+

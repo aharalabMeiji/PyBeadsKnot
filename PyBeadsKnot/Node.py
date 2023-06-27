@@ -9,7 +9,7 @@ class Node:
 		self.parent=_p
 		self.theta=0## argument
 		self.neighbors=[None, None, None, None]# four edges from this node
-		self.r=[10,10,10,10];#four length of arms
+		self.r=[5.0,5.0,5.0,5.0];#four length of arms
 		self.isJoint=True##is it a Joint node_?
 		self.isMidJoint=False
 		self.drawOn=False  ## show this node?
@@ -57,6 +57,38 @@ class Node:
 			return edge.nodeA
 		return None
 	def modifyAngle(self):
+
+		edges=[]
+		nodes=[]
+		nodeR=[]
+		x=[]
+		y=[]
+		for i in range(4):
+			if self.neighbors[i]==None:
+				return
+			edges.append(self.neighbors[i])
+			nodes.append(None)
+			nodeR.append(-1)
+			if getattr(edges[-1],'this_is_edge', False):
+				if edges[-1].nodeA==self:
+					nodes[-1]=edges[-1].nodeB
+					nodeR[-1]=edges[-1].rB
+				elif edges[-1].nodeB==self:
+					nodes[-1]=edges[-1].nodeA
+					nodeR[-1]=edges[-1].rA
+			if nodes[-1]==None:
+				return
+			x.append(nodes[-1].edge_x(nodeR[-1]))
+			y.append(nodes[-1].edge_y(nodeR[-1])) 
+		theta0=atan2(y[0]-y[2],x[0]-x[2])
+		theta1=atan2(y[1]-y[3],x[1]-x[3])
+
+		if theta1<theta0:
+			theta1+=2*pi
+		theta=(theta0+theta1)*0.5-pi/4
+		##print("%f, %f, %f"%(theta0, theta1, theta))
+		self.theta = 0.9 * self.theta + 0.1 * theta
+
 		pass
 
 class midJoint(Node):
