@@ -3,11 +3,11 @@ from math import cos, sin, pi, atan2
 class Node:
 	this_is_node=True
 	
-	def __init__(self, _x, _y, _p):
+	def __init__(self, _x, _y, _p, theta=0.0):
 		self.x=_x
 		self.y=_y
 		self.parent=_p
-		self.theta=0## argument
+		self.theta=theta## argument
 		self.neighbors=[None, None, None, None]# four edges from this node
 		self.r=[5.0,5.0,5.0,5.0];#four length of arms
 		self.isJoint=True##is it a Joint node_?
@@ -93,8 +93,8 @@ class Node:
 
 class midJoint(Node):
 	this_is_midjoint=True
-	def __init__(self, _x, _y, _p):
-		super().__init__( _x, _y, _p)
+	def __init__(self, _x, _y, _p, theta=0.0):
+		super().__init__( _x, _y, _p, theta=theta)
 		self.isMidJoint=True
 
 	def modifyAngle(self):
