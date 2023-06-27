@@ -23,28 +23,29 @@ class Application:
 		self.nodeRadius=5# radius of node in canvas
 		self.edgeWidth=3
 		self.beadsInterval=10
-		#self.file=fileIO(self)
-		#self.file.loadFile()
+		self.file=fileIO(self)
+		self.file.loadFile()
 
 		##sample data
-		sampleND1=midJoint(450, 66, self, theta=3.14)#2.678)
-		sampleND2=midJoint(450, 412, self, theta=3.14)
-		sampleND3=Node(300, 435, self, theta=2.896)
-		sampleND4=Node(600, 435, self, theta=-2.896+1.57)##-1.464)##
-		#sampleND5=Node(500, 500, self)
-		self.kg.addNode(sampleND1)
-		self.kg.addNode(sampleND2)
-		self.kg.addNode(sampleND3)
-		self.kg.addNode(sampleND4)
-		#self.kg.addNode(sampleND5)
-		sampleEG1=Edge(sampleND1, 0, sampleND3, 1, self)
-		sampleEG2=Edge(sampleND1, 2, sampleND4, 0, self)
-		sampleEG3=Edge(sampleND2, 0, sampleND3, 2, self)
-		sampleEG4=Edge(sampleND4, 3, sampleND2, 2, self)
-		self.kg.addEdge(sampleEG1)
-		self.kg.addEdge(sampleEG2)
-		self.kg.addEdge(sampleEG3)
-		self.kg.addEdge(sampleEG4)
+		if False:
+			sampleND1=midJoint(450, 66, self, theta=3.14)#2.678)
+			sampleND2=midJoint(450, 412, self, theta=3.14)
+			sampleND3=Node(300, 435, self, theta=2.896)
+			sampleND4=Node(600, 435, self, theta=-2.896+1.57)##-1.464)##
+			#sampleND5=Node(500, 500, self)
+			self.kg.addNode(sampleND1)
+			self.kg.addNode(sampleND2)
+			self.kg.addNode(sampleND3)
+			self.kg.addNode(sampleND4)
+			#self.kg.addNode(sampleND5)
+			sampleEG1=Edge(sampleND1, 0, sampleND3, 1, self)
+			sampleEG2=Edge(sampleND1, 2, sampleND4, 0, self)
+			sampleEG3=Edge(sampleND2, 0, sampleND3, 2, self)
+			sampleEG4=Edge(sampleND4, 3, sampleND2, 2, self)
+			self.kg.addEdge(sampleEG1)
+			self.kg.addEdge(sampleEG2)
+			self.kg.addEdge(sampleEG3)
+			self.kg.addEdge(sampleEG4)
 		self.draw()
 
 	pass
