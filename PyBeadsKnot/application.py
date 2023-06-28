@@ -16,7 +16,8 @@ class Application:
 		self.canvas.bind("<B1-Motion>", self.buttonDragging)  # 
 		self.canvas.bind("<Button-1>", self.buttonPressed)  # 
 		self.canvas.bind("<ButtonRelease-1>", self.buttonReleased)  # 
-		self.canvas.bind("<Motion>", self.update_coordinates) # 
+		self.canvas.bind("<Motion>", self.updateCoordinates) # 
+		self.canvas.bind("<KeyPress>",self.keyPressed)
 		self.kg=knotGraph(self)
 		self.nextNodeID=0
 		self.nextEdgeID=0
@@ -24,10 +25,10 @@ class Application:
 		self.edgeWidth=3
 		self.beadsInterval=10
 		self.file=fileIO(self)
-		self.file.loadFile()
+		#self.file.loadFile()
 
 		##sample data
-		if False:
+		if True:
 			sampleND1=midJoint(450, 66, self, theta=3.14)#2.678)
 			sampleND2=midJoint(450, 412, self, theta=3.14)
 			sampleND3=Node(300, 435, self, theta=2.896)
@@ -51,7 +52,7 @@ class Application:
 	pass
 
 
-	def update_coordinates(self, event):
+	def updateCoordinates(self, event):
 		self.mp.x=event.x
 		self.mp.y=event.y
 
@@ -81,6 +82,13 @@ class Application:
 	def buttonReleased(self, event):
 		self.update_coordinates(event)
 		self.mp.magneticND=None
+
+	def keyPressed(self, event):
+		if event.keysym=="Up":
+			pass
+		elif event.keysym=='o':
+			self.file.loadFile()
+			pass
 
 
 	def draw(self):
