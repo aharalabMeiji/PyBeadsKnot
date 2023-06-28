@@ -78,8 +78,8 @@ class Node:
 					nodeR[-1]=edges[-1].rA
 			if nodes[-1]==None:
 				return
-			x.append(nodes[-1].edge_x(nodeR[-1]))
-			y.append(nodes[-1].edge_y(nodeR[-1])) 
+			x.append(nodes[-1].edge_sx(nodeR[-1],10))
+			y.append(nodes[-1].edge_sy(nodeR[-1],10)) 
 		theta0=atan2(y[0]-y[2],x[0]-x[2])
 		theta1=atan2(y[1]-y[3],x[1]-x[3])
 
@@ -87,7 +87,7 @@ class Node:
 			theta1+=2*pi
 		theta=(theta0+theta1)*0.5-pi/4
 		##print("%f, %f, %f"%(theta0, theta1, theta))
-		self.theta = 0.9 * self.theta + 0.1 * theta
+		self.theta = 0.99 * self.theta + 0.01 * theta
 
 		pass
 
@@ -98,6 +98,7 @@ class midJoint(Node):
 		self.isMidJoint=True
 
 	def modifyAngle(self):
+		"""  """
 		if self.neighbors[0]!=None and self.neighbors[2]!=0:
 			edge0 = self.neighbors[0]
 			node0=None
@@ -111,8 +112,8 @@ class midJoint(Node):
 					node0R=edge0.rA
 			if node0==None:
 				return
-			x0=node0.edge_x(node0R)
-			y0=node0.edge_y(node0R)
+			x0=node0.edge_sx(node0R,10)
+			y0=node0.edge_sy(node0R,10)
 			edge1 = self.neighbors[2]
 			node1=None
 			node1R=-1
@@ -125,8 +126,8 @@ class midJoint(Node):
 					node1R=edge1.rA
 			if node1==None:
 				return
-			x1=node1.edge_x(node1R)
-			y1=node1.edge_y(node1R)
+			x1=node1.edge_sx(node1R,10)
+			y1=node1.edge_sy(node1R,10)
 			argument=atan2(y0-y1, x0-x1)
 			if self.theta-pi>=argument:
 				argument += 2*pi
