@@ -60,7 +60,7 @@ class Application:
 
 	def buttonDragging(self, event):
 		#self.canvas.delete("all")
-		self.update_coordinates(event)
+		self.updateCoordinates(event)
 		if self.mp.magneticND!=None and getattr(self.mp.magneticND, 'this_is_node', False)==True:
 			self.mp.magneticND.x=self.mp.x
 			self.mp.magneticND.y=self.mp.y
@@ -72,7 +72,7 @@ class Application:
 	# 
 
 	def buttonPressed(self, event):
-		self.update_coordinates(event)
+		self.updateCoordinates(event)
 		for node in self.kg.nodes:
 			if isNear(self.mp.x, self.mp.y, node.x, node.y, 10):
 				self.mp.magneticND=node
@@ -80,7 +80,7 @@ class Application:
 	
 
 	def buttonReleased(self, event):
-		self.update_coordinates(event)
+		self.updateCoordinates(event)
 		self.mp.magneticND=None
 
 	def keyPressed(self, event):
