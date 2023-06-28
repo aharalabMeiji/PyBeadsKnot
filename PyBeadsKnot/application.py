@@ -25,10 +25,11 @@ class Application:
 		self.edgeWidth=3
 		self.beadsInterval=10
 		self.file=fileIO(self)
-		#self.file.loadFile()
+		self.file.loadFile()
 
 		##sample data
-		if True:
+		sampleData=0
+		if sampleData==1:
 			sampleND1=midJoint(450, 66, self, theta=3.14)#2.678)
 			sampleND2=midJoint(450, 412, self, theta=3.14)
 			sampleND3=Node(300, 435, self, theta=2.896)
