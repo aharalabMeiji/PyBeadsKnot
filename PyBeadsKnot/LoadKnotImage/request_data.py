@@ -14,7 +14,7 @@ def make_knotimages_dataset():
         url="http://katlas.org"+h.select("img")[0].attrs["src"]
         print(i+1,url)
         response=requests.get(url,allow_redirects=False,timeout=5)
-        with open(os.path.join("./data",knot_name.split("/")[-1]+"."+ext),"wb") as fout:
+        with open(os.path.join("./data/gif",knot_name.split("/")[-1]+"."+ext),"wb") as fout:
             fout.write(response.content)
 
     response.close()
