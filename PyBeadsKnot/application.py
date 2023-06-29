@@ -17,7 +17,6 @@ class Application:
 		self.canvas.bind("<Button-1>", self.buttonPressed)  # 
 		self.canvas.bind("<ButtonRelease-1>", self.buttonReleased)  # 
 		self.canvas.bind("<Motion>", self.updateCoordinates) # 
-		self.canvas.bind("<KeyPress>",self.keyPressed)
 		self.kg=knotGraph(self)
 		self.nextNodeID=0
 		self.nextEdgeID=0
@@ -25,7 +24,7 @@ class Application:
 		self.edgeWidth=3
 		self.beadsInterval=10
 		self.file=fileIO(self)
-		self.file.loadFile()
+		#self.file.loadFile()
 
 		##sample data
 		sampleData=0
@@ -65,11 +64,12 @@ class Application:
 		if self.mp.magneticND!=None and getattr(self.mp.magneticND, 'this_is_node', False)==True:
 			self.mp.magneticND.x=self.mp.x
 			self.mp.magneticND.y=self.mp.y
+			for ed in self.mp.magneticND.neighbors:
+				if getattr(ed, 'this_is_edge', False):
+					ed.scalingShapeModifier()
 			self.mp.magneticND.drawNode(self.canvas)
 		for node in self.kg.nodes:
 			node.modifyAngle()
-			#for edge in self.kg.edges:
-			#	edge.scalingShapeModifier()
 	# 
 
 	def buttonPressed(self, event):
@@ -84,18 +84,10 @@ class Application:
 		self.updateCoordinates(event)
 		self.mp.magneticND=None
 
-	def keyPressed(self, event):
-		if event.keysym=="Up":
-			pass
-		elif event.keysym=='o':
-			self.file.loadFile()
-			pass
 
 
 	def draw(self):
 		self.canvas.delete("all")
-		for edge in self.kg.edges:
-			edge.scalingShapeModifier()
 		self.kg.drawAllEdges(self.canvas)
 		for node in self.kg.nodes:
 			node.modifyAngle()
@@ -104,3 +96,9 @@ class Application:
 		self.root.after(10, self.draw)
 		pass
 
+	def keyPressed(self, event):
+		if event.keysym=="Up":
+			pass
+		elif event.keysym=='o':
+			self.file.loadFile()
+			pass

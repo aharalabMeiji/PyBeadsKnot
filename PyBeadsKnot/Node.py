@@ -56,8 +56,8 @@ class Node:
 		elif edge.nodeB==self:
 			return edge.nodeA
 		return None
-	def modifyAngle(self):
 
+	def modifyAngle(self):
 		edges=[]
 		nodes=[]
 		nodeR=[]
