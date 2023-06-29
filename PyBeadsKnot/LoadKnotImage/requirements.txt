@@ -1,0 +1,4 @@
+notebook
+opencv-python
+scikit-learn
+matplotlib
