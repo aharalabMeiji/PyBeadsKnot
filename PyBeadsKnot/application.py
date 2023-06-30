@@ -52,7 +52,7 @@ class Application:
 			self.kg.addEdge(sampleEG2)
 			self.kg.addEdge(sampleEG3)
 			self.kg.addEdge(sampleEG4)
-		self.draw()
+		#self.draw()
 
 	pass
 
@@ -71,13 +71,8 @@ class Application:
 			for ed in self.mp.magneticND.neighbors:
 				if getattr(ed, 'this_is_edge', False):
 					ed.scalingShapeModifier()
-			#self.mp.magneticND.drawNode(self.canvas)
 			self.mp.magneticND.modifyAngle()
-		self.canvas.delete("all")
-		self.kg.drawAllEdges(self.canvas)
-		for node in self.kg.nodes:
-			node.modifyAngle()
-		self.kg.drawAllNodes(self.canvas)
+		self.drawAll(self.canvas)
 	# 
 
 	def buttonPressed(self, event):
@@ -85,49 +80,52 @@ class Application:
 		for node in self.kg.nodes:
 			if node.inUse and isNear(self.mp.x, self.mp.y, node.x, node.y, 10):
 				self.mp.magneticND=node
-				self.mp.magneticND.drawNode(self.canvas)
+				#self.mp.magneticND.drawNode(self.canvas)
 	
 
 	def buttonReleased(self, event):
 		self.updateCoordinates(event)
 		self.mp.magneticND=None
+		self.drawAll(self.canvas)
 
 
 
 	def draw(self):
-		#self.canvas.delete("all")
-		#self.kg.drawAllEdges(self.canvas)
-		#for node in self.kg.nodes:
-		#	node.modifyAngle()
-		#self.kg.drawAllNodes(self.canvas)
-
 		self.root.after(10, self.draw)
 		pass
 
 	def keyPressed(self, event):
 		if event.keysym=="Up":
 			self.cy -= 10
+			self.drawAll(self.canvas)		
 			pass
 		elif event.keysym=="Down":
 			self.cy += 10
+			self.drawAll(self.canvas)		
 			pass
 		elif event.keysym=="Right":
 			self.cx += 10
+			self.drawAll(self.canvas)		
 			pass
 		elif event.keysym=="Left":
 			self.cx -= 10
+			self.drawAll(self.canvas)		
 			pass
 		elif event.keysym=="1":
 			self.zoom *= 1.1
+			self.drawAll(self.canvas)		
 			pass
 		elif event.keysym=="0":
 			self.zoom /= 1.1
+			self.drawAll(self.canvas)		
 			pass
 		elif event.keysym=='o':
 			self.file.loadFile()
+			self.drawAll(self.canvas)		
 			pass
 		elif event.keysym=='s':
 			self.file.saveFile()
+			self.drawAll(self.canvas)		
 			pass
 
 
@@ -136,3 +134,8 @@ class Application:
 
 	def canvas2World(self, x,y):
 		return -self.cx+ (x -500) / self.zoom + 500 , -self.cy+ (y-500)/self.zoom + 500
+
+	def drawAll(self, canvas):
+		self.canvas.delete("all")
+		self.kg.drawAllEdges(self.canvas)
+		self.kg.drawAllNodes(self.canvas)

@@ -20,9 +20,14 @@ class Edge:
 		self.inUse=True
 		self.ec=EdgeConst()
 		self.scalingShapeModifier()
+		self.beadsNumber=self.getBeadsNumber()
 		pass
 
-	
+	def getBeadsNumber(self):
+		arclength = self.getArclength()
+		return max(6,int(arclength/15))
+
+
 	def isCollapse(self):
 		return not self.inUse;
 
@@ -38,8 +43,13 @@ class Edge:
 		xx0 = x1
 		yy0 = y1
 		xx0,yy0=self.parent.world2Canvas(xx0,yy0)
-		for i in range(1,26):
-			t= 0.04*i
+		step=1.0/(self.beadsNumber)
+		for i in range(1,self.beadsNumber+1):
+			if (self.rA)%2==1 and i<=2:
+				continue
+			if (self.rB)%2==1 and i>=self.beadsNumber-1:
+				continue
+			t= step*i
 			xx = self.coordinateBezier(x1, x2, x3, x4, t)
 			yy = self.coordinateBezier(y1, y2, y3, y4, t)
 			xx,yy=self.parent.world2Canvas(xx,yy)
@@ -106,7 +116,7 @@ class Edge:
 	
 	def getArclength(self) :
 		""" get approx. arclength by table"""
-		t1,th1,t2,th2,rate=self.getT1T2(self)
+		t1,th1,t2,th2,rate=self.getT1T2()
 		a40 = self.ec.arcLen[th1][th2]
 		a41 = self.ec.arcLen[(th1 + 1) % 36][th2]
 		a42 = self.ec.arcLen[th1][(th2 + 1) % 36]

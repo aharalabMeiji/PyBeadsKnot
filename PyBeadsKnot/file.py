@@ -102,7 +102,7 @@ class fileIO:
 	def saveFile(self):
 		fTyp = [("", "*")]
 		iDir = os.path.abspath(os.path.dirname(__file__))
-		file_name = filedialog.asksavefilename(filetypes=fTyp, initialdir=iDir)
+		file_name = filedialog.asksaveasfilename(filetypes=fTyp, initialdir=iDir)
 		print(file_name)
 		self.filename=file_name
 		if ".bdk" in file_name[-4:]:
@@ -111,21 +111,25 @@ class fileIO:
 
 	def saveBeadsKnotFile(self):
 		self.ext="bdk"
-		f = open(self.filename+'.'+self.ext, 'w')
+		f = open(self.filename, 'w')
 		f.write("BeadsKnot,0\n")
 		lenNodes = len(self.parent.kg.nodes)
-		f.write("Nodes,"+len(lenNodes)+"\n")
+		f.write("Nodes,%d\n"%(lenNodes))
 		for i in range(lenNodes) :
 			nd = self.parent.kg.nodes[i]
 			if nd.inUse:
-				f.write(nd.x+","+nd.y+","+nd.theta+","+nd.r[0]+","+nd.r[1]+","+nd.r[2]+","+nd.r[3]+"\n")
+				f.write("%f,%f,%f,%f,%f,%f,%f\n"%(nd.x,nd.y,nd.theta,nd.r[0],nd.r[1],nd.r[2],nd.r[3]))
 			else :
-				f.write(0+","+0+","+0+","+10+","+10+","+10+","+10+"\n")
+				f.write("0,0,0,0,0,0,0\n")
 		lenEdges = len(self.parent.kg.edges)
-		f.write("Edges,"+lenEdges)
+		f.write("Edges,%d\n"%(lenEdges))
 		for i in range(lenEdges):
 			ed = self.parent.kg.edges[i]
-			f.write(ed.ANodeID+","+ed.ANodeRID+","+ed.BNodeID+","+ed.BNodeRID)
+			nA=self.parent.kg.nodes.index(ed.nodeA)
+			rA=ed.rA
+			nB=self.parent.kg.nodes.index(ed.nodeB)
+			rB=ed.rB
+			f.write("%d,%d,%d,%d\n"%(nA,rA,nB,rB))
 		f.close()
 		pass
 
