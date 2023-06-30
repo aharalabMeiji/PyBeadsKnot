@@ -49,7 +49,7 @@ class fileIO:
 						newND=midJoint(x,y,self.parent)
 					else:
 						newND=Node(x,y,self.parent)
-					newND.theta=-theta
+					newND.theta=theta
 					newND.r[0]=r0
 					newND.r[1]=r1
 					newND.r[2]=r2
@@ -69,14 +69,14 @@ class fileIO:
 					rA=int(texts[1])
 					nB=int(texts[2])
 					rB=int(texts[3])
-					if rA==3:
-						rA=1
-					elif rA==1:
-						rA=3
-					if rB==3:
-						rB=1
-					elif rB==1:
-						rB=3
+					#if rA==3:
+					#	rA=1
+					#elif rA==1:
+					#	rA=3
+					#if rB==3:
+					#	rB=1
+					#elif rB==1:
+					#	rB=3
 					self.parent.kg.nodes[nA].inUse=True
 					self.parent.kg.nodes[nB].inUse=True
 					newED=Edge(self.parent.kg.nodes[nA],rA,self.parent.kg.nodes[nB],rB, self.parent)

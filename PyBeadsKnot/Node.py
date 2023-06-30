@@ -21,11 +21,11 @@ class Node:
 	def edge_x(self, i) :
 		return self.x + self.r[i] * cos(self.theta+pi/2*i)
 	def edge_y(self, i) :
-		return self.y + self.r[i] * sin(self.theta+pi/2*i)
+		return self.y - self.r[i] * sin(self.theta+pi/2*i)
 	def edge_sx(self, i, s) :
 		return self.x + s * cos(self.theta+pi/2*i)
 	def edge_sy(self, i, s) :
-		return self.y + s * sin(self.theta+pi/2*i)
+		return self.y - s * sin(self.theta+pi/2*i)
 
 	def getR(self, i):
 		if isinstance(i, int):
@@ -83,8 +83,8 @@ class Node:
 				return
 			x.append(nodes[-1].edge_sx(nodeR[-1],10))
 			y.append(nodes[-1].edge_sy(nodeR[-1],10)) 
-		theta0=atan2(y[0]-y[2],x[0]-x[2])
-		theta1=atan2(y[1]-y[3],x[1]-x[3])
+		theta0=-atan2(y[0]-y[2],x[0]-x[2])
+		theta1=-atan2(y[1]-y[3],x[1]-x[3])
 
 		if theta1<theta0:
 			theta1+=2*pi
@@ -131,7 +131,7 @@ class midJoint(Node):
 				return
 			x1=node1.edge_sx(node1R,10)
 			y1=node1.edge_sy(node1R,10)
-			argument=atan2(y0-y1, x0-x1)
+			argument=-atan2(y0-y1, x0-x1)
 			if self.theta-pi>=argument:
 				argument += 2*pi
 			elif self.theta+pi<argument:

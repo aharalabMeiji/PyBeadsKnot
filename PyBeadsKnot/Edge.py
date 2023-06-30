@@ -38,22 +38,24 @@ class Edge:
 		y2=self.nodeA.edge_y(self.rA)
 		x3=self.nodeB.edge_x(self.rB)
 		y3=self.nodeB.edge_y(self.rB)
-		x4=self.nodeB.x
+		x4=self.nodeB.x 
 		y4=self.nodeB.y
 		xx0 = x1
 		yy0 = y1
 		xx0,yy0=self.parent.world2Canvas(xx0,yy0)
 		step=1.0/(self.beadsNumber)
 		for i in range(1,self.beadsNumber+1):
-			if (self.rA)%2==1 and i<=2:
-				continue
-			if (self.rB)%2==1 and i>=self.beadsNumber-1:
-				continue
 			t= step*i
 			xx = self.coordinateBezier(x1, x2, x3, x4, t)
 			yy = self.coordinateBezier(y1, y2, y3, y4, t)
 			xx,yy=self.parent.world2Canvas(xx,yy)
-			canvas.create_line(xx0, yy0, xx, yy, width=self.parent.edgeWidth)
+			draw=True
+			if (self.rA)%2==1 and i<=1:
+				draw=False
+			if (self.rB)%2==1 and i>=self.beadsNumber:
+				draw=False
+			if draw:
+				canvas.create_line(xx0, yy0, xx, yy, width=self.parent.edgeWidth)
 			xx0 = xx
 			yy0 = yy
 			
