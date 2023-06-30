@@ -23,6 +23,11 @@ class Application:
 		self.nodeRadius=5# radius of node in canvas
 		self.edgeWidth=3
 		self.beadsInterval=10
+
+		self.cx=0
+		self.cy=0
+		self.zoom=1.0
+
 		self.file=fileIO(self)
 		#self.file.loadFile()
 
@@ -53,13 +58,12 @@ class Application:
 
 
 	def updateCoordinates(self, event):
-		self.mp.x=event.x
-		self.mp.y=event.y
+		self.mp.x, self.mp.y=self.canvas2World( event.x, event.y)
 
 		pass
 
 	def buttonDragging(self, event):
-		#self.canvas.delete("all")
+		self.canvas.delete("all")
 		self.updateCoordinates(event)
 		if self.mp.magneticND!=None and getattr(self.mp.magneticND, 'this_is_node', False)==True:
 			self.mp.magneticND.x=self.mp.x
@@ -67,15 +71,19 @@ class Application:
 			for ed in self.mp.magneticND.neighbors:
 				if getattr(ed, 'this_is_edge', False):
 					ed.scalingShapeModifier()
-			self.mp.magneticND.drawNode(self.canvas)
+			#self.mp.magneticND.drawNode(self.canvas)
+			self.mp.magneticND.modifyAngle()
+		self.canvas.delete("all")
+		self.kg.drawAllEdges(self.canvas)
 		for node in self.kg.nodes:
 			node.modifyAngle()
+		self.kg.drawAllNodes(self.canvas)
 	# 
 
 	def buttonPressed(self, event):
 		self.updateCoordinates(event)
 		for node in self.kg.nodes:
-			if isNear(self.mp.x, self.mp.y, node.x, node.y, 10):
+			if node.inUse and isNear(self.mp.x, self.mp.y, node.x, node.y, 10):
 				self.mp.magneticND=node
 				self.mp.magneticND.drawNode(self.canvas)
 	
@@ -87,18 +95,44 @@ class Application:
 
 
 	def draw(self):
-		self.canvas.delete("all")
-		self.kg.drawAllEdges(self.canvas)
-		for node in self.kg.nodes:
-			node.modifyAngle()
-		self.kg.drawAllNodes(self.canvas)
+		#self.canvas.delete("all")
+		#self.kg.drawAllEdges(self.canvas)
+		#for node in self.kg.nodes:
+		#	node.modifyAngle()
+		#self.kg.drawAllNodes(self.canvas)
 
 		self.root.after(10, self.draw)
 		pass
 
 	def keyPressed(self, event):
 		if event.keysym=="Up":
+			self.cy -= 10
+			pass
+		elif event.keysym=="Down":
+			self.cy += 10
+			pass
+		elif event.keysym=="Right":
+			self.cx += 10
+			pass
+		elif event.keysym=="Left":
+			self.cx -= 10
+			pass
+		elif event.keysym=="1":
+			self.zoom *= 1.1
+			pass
+		elif event.keysym=="0":
+			self.zoom /= 1.1
 			pass
 		elif event.keysym=='o':
 			self.file.loadFile()
 			pass
+		elif event.keysym=='s':
+			self.file.saveFile()
+			pass
+
+
+	def world2Canvas(self, x,y):
+		return self.cx+self.zoom * (x -500) + 500, self.cy+self.zoom * (y-500) + 500
+
+	def canvas2World(self, x,y):
+		return -self.cx+ (x -500) / self.zoom + 500 , -self.cy+ (y-500)/self.zoom + 500

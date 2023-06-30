@@ -23,6 +23,8 @@ class fileIO:
 		pass
 
 	def loadBeadsKnotFile(self):
+		self.parent.kg.nodes=[]
+		self.parent.kg.edges=[]
 		f = open(self.filename, 'r')
 		self.kg=knotGraph(self)
 		self.parent.nextNodeID
@@ -55,6 +57,9 @@ class fileIO:
 					self.parent.kg.addNode(newND)
 			texts=datalist[line].split(',')
 			line +=1
+			for node in self.parent.kg.nodes:
+				node.inUse=False
+				pass
 			if 'Edges' in texts[0]:
 				lenEdges=int(texts[1])
 				for i in range(lenEdges) :
@@ -72,9 +77,16 @@ class fileIO:
 						rB=1
 					elif rB==1:
 						rB=3
+					self.parent.kg.nodes[nA].inUse=True
+					self.parent.kg.nodes[nB].inUse=True
 					newED=Edge(self.parent.kg.nodes[nA],rA,self.parent.kg.nodes[nB],rB, self.parent)
 					self.parent.kg.addEdge(newED)
 		f.close()
+		self.parent.canvas.delete("all")
+		self.parent.kg.drawAllEdges(self.parent.canvas)
+		for node in self.kg.nodes:
+			node.modifyAngle()
+		self.parent.kg.drawAllNodes(self.parent.canvas)
 
 		pass
 
@@ -88,6 +100,13 @@ class fileIO:
 		pass
 
 	def saveFile(self):
+		fTyp = [("", "*")]
+		iDir = os.path.abspath(os.path.dirname(__file__))
+		file_name = filedialog.asksavefilename(filetypes=fTyp, initialdir=iDir)
+		print(file_name)
+		self.filename=file_name
+		if ".bdk" in file_name[-4:]:
+			self.saveBeadsKnotFile()
 		pass
 
 	def saveBeadsKnotFile(self):

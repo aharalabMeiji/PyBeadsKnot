@@ -35,7 +35,10 @@ class Node:
 			self.r[i%4]=rr
 
 	def drawNode(self, canvas):
-		canvas.create_oval(self.x-self.parent.nodeRadius, self.y-self.parent.nodeRadius, self.x+self.parent.nodeRadius, self.y+self.parent.nodeRadius, fill='red')
+		if self.inUse:
+			xx0,yy0=self.parent.world2Canvas(self.x-self.parent.nodeRadius,self.y-self.parent.nodeRadius)
+			xx1,yy1=self.parent.world2Canvas(self.x+self.parent.nodeRadius,self.y+self.parent.nodeRadius)
+			canvas.create_oval(xx0,yy0,xx1,yy1, fill='red')
 		pass
 	def otherside(self, p):
 		if p==None:
