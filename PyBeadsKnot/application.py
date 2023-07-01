@@ -59,7 +59,6 @@ class Application:
 
 	def updateCoordinates(self, event):
 		self.mp.x, self.mp.y=self.canvas2World( event.x, event.y)
-
 		pass
 
 	def buttonDragging(self, event):
@@ -77,14 +76,29 @@ class Application:
 
 	def buttonPressed(self, event):
 		self.updateCoordinates(event)
+		self.mp.bpX, self.mp.bpY = self.mp.x, self.mp.y
 		for node in self.kg.nodes:
 			if node.inUse and isNear(self.mp.x, self.mp.y, node.x, node.y, 10):
 				self.mp.magneticND=node
-				#self.mp.magneticND.drawNode(self.canvas)
+
 	
 
 	def buttonReleased(self, event):
 		self.updateCoordinates(event)
+		if isNear(self.mp.x,self.mp.y,self.mp.bpX,self.mp.bpY,5):## clicked
+			for node in self.kg.nodes:
+				if node.inUse and isNear(self.mp.x, self.mp.y, node.x, node.y, 10):
+					if getattr(node,'this_is_midjoint', False):
+						### clicking midJoint -> delete the midJoint
+						break
+					else:
+						### clicking Node -> change crossing
+						break
+			for edge in self.kg.edges:
+				if edge.isPointOnEdge(self.mp.x,self.mp.y):
+					### clicking on an edge -> add new midJoint
+					break
+
 		self.mp.magneticND=None
 		self.drawAll(self.canvas)
 

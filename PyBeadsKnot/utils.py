@@ -4,6 +4,8 @@ import math
 class mousePosition:
 	x=0
 	y=0
+	bpX=0## buttonPressedX
+	bpY=0## buttonPressedY
 	magneticND=None
 
 def atan2vec(a,c,p,q):
