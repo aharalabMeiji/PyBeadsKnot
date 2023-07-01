@@ -170,13 +170,13 @@ class Edge:
 		y3=self.nodeB.edge_y(self.rA)
 		x4=self.nodeB.x
 		y4=self.nodeB.y
-		for i in range(25):
+		x0,y0=x1,y1
+		for i in range(1,26):
 			t= 0.04*i
-			xx = self.coordinateBezier(x1, x2, x3, x4, t)
-			yy = self.coordinateBezier(y1, y2, y3, y4, t)
-			if isNear(x,y,xx,yy,self.parent.beadsInterval):
+			xx,yy = self.coordinateBezier(x1, x2, x3, x4, t),self.coordinateBezier(y1, y2, y3, y4, t)
+			if isNear(x,y,xx,yy,dist(x0,y0,xx,yy)):
 				return True
-
+			x0,y0=xx,yy
 		return False;
 
 
