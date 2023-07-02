@@ -1,8 +1,10 @@
 from Node import Node, midJoint
 from Edge import Edge
 from KnotGraph import knotGraph
+from pixel import pixel
 
 import os
+import cv2
 from tkinter import filedialog
 
 class fileIO:
@@ -12,14 +14,15 @@ class fileIO:
 		self.parent=p#application
 
 	def loadFile(self):
-		fTyp = [("", "*")]
+		fTyp = [("", "*"),("", "bdk"),("", "png,PNG")]
 		iDir = os.path.abspath(os.path.dirname(__file__))
 		file_name = filedialog.askopenfilename(filetypes=fTyp, initialdir=iDir)
 		print(file_name)
 		self.filename=file_name
 		if ".bdk" in file_name[-4:]:
 			self.loadBeadsKnotFile()
-		
+		elif ".png" in file_name[-4:] or ".PNG" in file_name[-4:]:
+			self.loadImageFile()
 		pass
 
 	def loadBeadsKnotFile(self):
@@ -90,8 +93,81 @@ class fileIO:
 
 		pass
 
+	
 	def loadImageFile(self):
+		im0 = cv2.imread(self.filename)
+		width, height, x = im0.shape
+		gray = cv2.cvtColor(im0, cv2.COLOR_BGR2GRAY)
+		_, gray = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)		
+		image = cv2.bitwise_not(gray)
+		# THINNING_ZHANGSUEN
+		skeleton1 = cv2.ximgproc.thinning(image, thinningType=cv2.ximgproc.THINNING_ZHANGSUEN)
+		
+		cv2.imshow("caption",skeleton1)
+		cv2.waitKey(0) 
+		pixels=[]
+		for w in range(width):
+			for h in range(height):
+				if skeleton1[w][h]==255:
+					newPixel=pixel(w,h)
+					pixels.append(newPixel)
+					for (i,j) in [(-1,-1),(-1,0),(-1,1),(0,-1),(0,1),(1,-1),(1,0),(1,1)]:
+						if skeleton1[w+i][h+j]==255:
+							newPixel.next.append((w+i,h+j))
+		for p in pixels:
+			for q in pixels:
+				if (q.x, q.y) in p.next:
+					p.neighbors.append(q)
+			if len(p.next)==1:
+				p.end=True
+			elif len(p.next)>=3:
+				p.trivalent=True
+		ends = [p for p in pixels if p.end==True]
+
 		pass
+
+	def findTangetAtEndpoint(self):
+		pass
+
+	def dismissCluster():
+		"""
+		“_‚Ì‰ò‚ğœ‹‚·‚é"""
+		pass
+
+
+	def removeThrone():
+		"""
+		‚Æ‚°‚ğ”²‚­"""
+		#for (int u=0; u<points.size (); u++) {
+		#	Bead bdU = getBead(u);
+		#	if (bdU==null) {
+		#		continue;
+		#	}
+		#	if ( getBead(u).c==1) {
+		#		for (int i=nbhds.size ()-1; i>=0; i--) {
+		#			Nbhd n=getNbhd(i);
+		#			if (n!=null) {
+		#				if (n.a==u) {
+		#					Bead bdNB = getBead(n.b); 
+		#					if (bdNB!=null && bdNB.c==3) {
+		#						removePoint(u);
+		#						bdNB.c=2;
+		#					}
+		#				} 
+		#				if (n.b==u) {
+		#					Bead bdNA = getBead(n.a);
+		#					if (bdNA!=null && bdNA.c==3) {
+		#						removePoint(u);
+		#						bdNA.c=2;
+		#					}
+		#				}
+		#			}
+		#		}
+		#	}
+		#}
+	}
+		pass
+
 
 	def loadDowkerFile(self):
 		pass
